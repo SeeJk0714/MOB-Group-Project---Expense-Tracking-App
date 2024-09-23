@@ -40,8 +40,14 @@ android {
             signingConfig = signingConfigs.debug
         }
     }
+
+    buildFeatures {
+        buildConfig = true
+    }
 }
 
 flutter {
     source = "../.."
 }
+
+apply plugin: 'com.google.gms.google-services'
