@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "644968735950",
+    "project_id": "expense-tracking-app-3668e",
+    "storage_bucket": "expense-tracking-app-3668e.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:644968735950:android:d9eb108b5803952480dc9f",
+        "android_client_info": {
+          "package_name": "com.jkdr.expense_tracking_app"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCiT9npjpTSpsqJoIc19PSUOdF0ws8LkS0"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
