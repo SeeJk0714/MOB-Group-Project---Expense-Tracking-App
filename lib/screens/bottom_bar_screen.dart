@@ -1,5 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:google_nav_bar/google_nav_bar.dart';
+import 'home_screen.dart';
+import 'add_edit/add/add_tab_bar_screen.dart'; // Import the AddScreen
+import 'overview_screen.dart'; // Import the OverviewScreen
+import 'search_screen.dart'; // Import the SearchScreen
 
 class BottomBarScreen extends StatefulWidget {
   const BottomBarScreen({super.key});
@@ -11,21 +15,15 @@ class BottomBarScreen extends StatefulWidget {
 class _BottomBarScreenState extends State<BottomBarScreen> {
   int _selectedIndex = 0; // Track the selected index
 
-  /*
-    This list holds all the screen widgets for each tab in the bottom navigation. 
-    When a tab is tapped, the corresponding screen is displayed.
-   */
+  // List of screen widgets corresponding to each tab
   final List<Widget> _screens = [
-    // const HomeScreen(),
-    // const AddScreen(),
-    // const OverviewScreen(),
-    // const SearchScreen(),
+    const HomeScreen(),
+    const AddTabBarScreen(), // Add the AddScreen widget
+    const OverviewScreen(), // Add the OverviewScreen widget
+    const SearchScreen(), // Add the SearchScreen widget
   ];
 
-  /*
-    The _onTabSelected function updates the selected tab index and refreshes 
-    the UI to show the corresponding screen.
-  */
+  // Handle tab selection
   void _onTabSelected(int index) {
     setState(() {
       _selectedIndex = index;
