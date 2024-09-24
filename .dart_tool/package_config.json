@@ -134,6 +134,12 @@
       "languageVersion": "3.3"
     },
     {
+      "name": "google_nav_bar",
+      "rootUri": "file:///C:/Users/JK/AppData/Local/Pub/Cache/hosted/pub.dev/google_nav_bar-5.0.6",
+      "packageUri": "lib/",
+      "languageVersion": "2.12"
+    },
+    {
       "name": "http",
       "rootUri": "file:///C:/Users/JK/AppData/Local/Pub/Cache/hosted/pub.dev/http-1.2.2",
       "packageUri": "lib/",
@@ -278,7 +284,7 @@
       "languageVersion": "3.5"
     }
   ],
-  "generated": "2024-09-23T07:07:29.021464Z",
+  "generated": "2024-09-23T07:18:43.909152Z",
   "generator": "pub",
   "generatorVersion": "3.5.2",
   "flutterRoot": "file:///C:/flutter",
