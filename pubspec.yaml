@@ -17,6 +17,7 @@ dependencies:
     cloud_firestore: ^5.4.1
     http: ^1.2.2
     google_nav_bar: ^5.0.6
+    intl: ^0.17.0
 
 dev_dependencies:
     flutter_test:

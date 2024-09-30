@@ -1,3 +1,5 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
+
 class Task {
   String? id;
   final DateTime date; //
@@ -51,7 +53,7 @@ class Task {
   static Task fromMap(Map<String, dynamic> mp) {
     return Task(
       id: mp["id"] as String?,
-      date: DateTime.parse(mp["date"]),
+      date: (mp["date"] as Timestamp).toDate(),
       account: mp["account"] as String,
       category: mp["category"] as String,
       amount: mp["amount"] as double,
