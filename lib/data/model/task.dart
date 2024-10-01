@@ -50,9 +50,9 @@ class Task {
     };
   }
 
-  static Task fromMap(Map<String, dynamic> mp) {
+  static Task fromMap(Map<String, dynamic> mp, String id) {
     return Task(
-      id: mp["id"] as String?,
+      id: id,
       date: (mp["date"] as Timestamp).toDate(),
       account: mp["account"] as String,
       category: mp["category"] as String,
@@ -64,6 +64,6 @@ class Task {
 
   @override
   String toString() {
-    return "Task($id, $date, $account, $category, $amount, $note, $status)";
+    return "Task($date, $account, $category, $amount, $note, $status)";
   }
 }

@@ -1,4 +1,6 @@
+import 'package:expense_tracking_app/nav/Navigation.dart';
 import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
 import 'package:intl/intl.dart';
 import '../data/model/task.dart'; // Import Task model
 
@@ -50,6 +52,14 @@ class _DetailScreenState extends State<DetailScreen> {
     }
   }
 
+  // Click this go to edit page
+  void _navigateToEdit(String id) async {
+    await context.pushNamed(
+      Screen.edit.name,
+      pathParameters: {"id": id},
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     // Group tasks by date
@@ -63,6 +73,7 @@ class _DetailScreenState extends State<DetailScreen> {
     return Scaffold(
       appBar: AppBar(
         title: const Text('Detail Screen'),
+        centerTitle: true,
       ),
       body: Padding(
         padding: const EdgeInsets.all(16.0),
@@ -121,18 +132,23 @@ class _DetailScreenState extends State<DetailScreen> {
                                 return Padding(
                                   padding: const EdgeInsets.symmetric(
                                       vertical: 6, horizontal: 16),
-                                  child: Container(
-                                    decoration: BoxDecoration(
-                                        color:
-                                            backgroundColor, // Apply the background color here
-                                        borderRadius:
-                                            BorderRadius.circular(12)),
-                                    child: ListTile(
-                                      leading: Icon(
-                                          _getIconForCategory(task.category)),
-                                      title: Text(task.category),
-                                      subtitle: Text(
-                                          'RM ${task.amount.toStringAsFixed(2)} - ${task.status}'),
+                                  child: GestureDetector(
+                                    onTap: () {
+                                      _navigateToEdit(task.id!);
+                                    },
+                                    child: Container(
+                                      decoration: BoxDecoration(
+                                          color:
+                                              backgroundColor, // Apply the background color here
+                                          borderRadius:
+                                              BorderRadius.circular(12)),
+                                      child: ListTile(
+                                        leading: Icon(
+                                            _getIconForCategory(task.category)),
+                                        title: Text(task.note),
+                                        subtitle: Text(
+                                            'RM ${task.amount.toStringAsFixed(2)} - ${task.status}'),
+                                      ),
                                     ),
                                   ),
                                 );
@@ -140,9 +156,11 @@ class _DetailScreenState extends State<DetailScreen> {
                             ),
                             const SizedBox(height: 8),
                             Padding(
-                              padding: const EdgeInsets.symmetric(vertical: 6, horizontal: 16),
+                              padding: const EdgeInsets.symmetric(
+                                  vertical: 6, horizontal: 16),
                               child: Row(
-                                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                mainAxisAlignment:
+                                    MainAxisAlignment.spaceBetween,
                                 children: [
                                   const Text(
                                     "BALANCE:",

@@ -1,6 +1,8 @@
 import 'package:expense_tracking_app/data/model/task.dart';
 import 'package:expense_tracking_app/screens/detail_screen.dart';
+import 'package:expense_tracking_app/nav/Navigation.dart';
 import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
 import 'package:intl/intl.dart';
 
 import '../data/repo/task_repository.dart';
@@ -83,7 +85,8 @@ class _HomeScreenState extends State<HomeScreen> {
   }
 
   Widget buildExpenseItem(String title, String subtitle, String amount,
-      IconData icon, String status) {
+      IconData icon, String status,
+      {VoidCallback? onTap}) {
     final backgroundColor = status.trim().toLowerCase() == 'income'
         ? const Color(0xffCAA6A6)
         : const Color(0xfff8d7da);
@@ -91,30 +94,41 @@ class _HomeScreenState extends State<HomeScreen> {
     return Padding(
       padding: const EdgeInsets.symmetric(
           vertical: 6, horizontal: 16), // Adjusted padding
-      child: Container(
-        decoration: BoxDecoration(
-          color: backgroundColor,
-          borderRadius: BorderRadius.circular(12),
-        ),
-        child: ListTile(
-          contentPadding: const EdgeInsets.symmetric(
-              vertical: 10, horizontal: 16), // Adjusted padding inside ListTile
-          leading: Icon(icon, size: 30, color: Colors.black),
-          title: Text(
-            title,
-            style: const TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+      child: GestureDetector(
+        onTap: onTap,
+        child: Container(
+          decoration: BoxDecoration(
+            color: backgroundColor,
+            borderRadius: BorderRadius.circular(12),
           ),
-          subtitle: Text(subtitle),
-          trailing: Text(
-            'RM $amount',
-            style: const TextStyle(
-              fontSize: 16,
-              fontWeight: FontWeight.bold,
+          child: ListTile(
+            contentPadding: const EdgeInsets.symmetric(
+                vertical: 10,
+                horizontal: 16), // Adjusted padding inside ListTile
+            leading: Icon(icon, size: 30, color: Colors.black),
+            title: Text(
+              title,
+              style: const TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+            ),
+            subtitle: Text(subtitle),
+            trailing: Text(
+              'RM $amount',
+              style: const TextStyle(
+                fontSize: 16,
+                fontWeight: FontWeight.bold,
+              ),
             ),
           ),
         ),
       ),
     );
+  }
+
+  // Click this go to edit page
+  void _navigateToEdit(String id) async {
+    await context.pushNamed(Screen.edit.name,
+        pathParameters: {"id": id} // Indicate return to home
+        );
   }
 
   Widget _buildTasksList(
@@ -185,11 +199,14 @@ class _HomeScreenState extends State<HomeScreen> {
                 itemBuilder: (context, index) {
                   final task = tasks[index];
                   return buildExpenseItem(
-                    task.category,
+                    task.note,
                     task.account,
                     task.amount.toStringAsFixed(2),
                     _getIconForCategory(task.category),
                     task.status,
+                    onTap: () {
+                      _navigateToEdit(task.id!);
+                    },
                   );
                 },
               ),
