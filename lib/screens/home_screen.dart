@@ -1,5 +1,7 @@
 import 'package:expense_tracking_app/data/model/task.dart';
+import 'package:expense_tracking_app/nav/Navigation.dart';
 import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
 import 'package:intl/intl.dart';
 
 import '../data/repo/task_repository.dart';
@@ -82,36 +84,48 @@ class _HomeScreenState extends State<HomeScreen> {
   }
 
   Widget buildExpenseItem(String title, String subtitle, String amount,
-      IconData icon, String status) {
+      IconData icon, String status,
+      {VoidCallback? onTap}) {
     final backgroundColor = status.trim().toLowerCase() == 'income'
         ? const Color(0xffCAA6A6)
         : const Color(0xfff8d7da);
 
     return Padding(
-      padding: const EdgeInsets.symmetric(vertical: 6, horizontal: 16), // Adjusted padding
-      child: Container(
-        decoration: BoxDecoration(
-          color: backgroundColor,
-          borderRadius: BorderRadius.circular(12),
-        ),
-        child: ListTile(
-          contentPadding: const EdgeInsets.symmetric(vertical: 10, horizontal: 16), // Adjusted padding inside ListTile
-          leading: Icon(icon, size: 30, color: Colors.black),
-          title: Text(
-            title,
-            style: const TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+      padding: const EdgeInsets.symmetric(
+          vertical: 6, horizontal: 16), // Adjusted padding
+      child: GestureDetector(
+        onTap: onTap,
+        child: Container(
+          decoration: BoxDecoration(
+            color: backgroundColor,
+            borderRadius: BorderRadius.circular(12),
           ),
-          subtitle: Text(subtitle),
-          trailing: Text(
-            'RM $amount',
-            style: const TextStyle(
-              fontSize: 16,
-              fontWeight: FontWeight.bold,
+          child: ListTile(
+            contentPadding: const EdgeInsets.symmetric(
+                vertical: 10,
+                horizontal: 16), // Adjusted padding inside ListTile
+            leading: Icon(icon, size: 30, color: Colors.black),
+            title: Text(
+              title,
+              style: const TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+            ),
+            subtitle: Text(subtitle),
+            trailing: Text(
+              'RM $amount',
+              style: const TextStyle(
+                fontSize: 16,
+                fontWeight: FontWeight.bold,
+              ),
             ),
           ),
         ),
       ),
     );
+  }
+
+  // Click this go to edit page
+  void _navigateToEdit(String id) async {
+    await context.pushNamed(Screen.edit.name, pathParameters: {"id": id});
   }
 
   // double calculateTotalIncome(List<Task> tasks) {
@@ -126,10 +140,13 @@ class _HomeScreenState extends State<HomeScreen> {
   //       .fold(0.0, (sum, task) => sum + task.amount);
   // }
 
-  Widget _buildTasksList(List<Task> tasks, String title, double balance, String date) {
+  Widget _buildTasksList(
+      List<Task> tasks, String title, double balance, String date) {
     return SliverToBoxAdapter(
       child: Padding(
-        padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 12.0), // Adjusted padding for entire list block
+        padding: const EdgeInsets.symmetric(
+            horizontal: 16.0,
+            vertical: 12.0), // Adjusted padding for entire list block
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
@@ -141,18 +158,25 @@ class _HomeScreenState extends State<HomeScreen> {
                   children: [
                     Text(
                       title,
-                      style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+                      style: const TextStyle(
+                          fontSize: 18, fontWeight: FontWeight.bold),
                     ),
                     Text(
                       date,
-                      style: const TextStyle(fontSize: 16, fontWeight: FontWeight.w500, color: Colors.grey),
+                      style: const TextStyle(
+                          fontSize: 16,
+                          fontWeight: FontWeight.w500,
+                          color: Colors.grey),
                     ),
                   ],
                 ),
               ),
             if (tasks.isNotEmpty)
               Container(
-                padding: const EdgeInsets.symmetric(vertical: 12, horizontal: 16), // Adjusted padding for Net Balance container
+                padding: const EdgeInsets.symmetric(
+                    vertical: 12,
+                    horizontal:
+                        16), // Adjusted padding for Net Balance container
                 decoration: BoxDecoration(
                   color: Colors.grey[200],
                   borderRadius: BorderRadius.circular(12),
@@ -162,7 +186,8 @@ class _HomeScreenState extends State<HomeScreen> {
                   children: [
                     const Text(
                       'Net Balance:',
-                      style: TextStyle(fontSize: 16, fontWeight: FontWeight.w500),
+                      style:
+                          TextStyle(fontSize: 16, fontWeight: FontWeight.w500),
                     ),
                     Text(
                       'RM ${balance.toStringAsFixed(2)}',
@@ -188,6 +213,9 @@ class _HomeScreenState extends State<HomeScreen> {
                     task.amount.toStringAsFixed(2),
                     _getIconForCategory(task.category),
                     task.status,
+                    onTap: () {
+                      _navigateToEdit(task.id!);
+                    },
                   );
                 },
               ),
@@ -246,18 +274,22 @@ class _HomeScreenState extends State<HomeScreen> {
           // Calculate income and expenses for previous day
           totalIncomePreviousDay = calculateTotalIncome(previousDayTasks);
           totalExpensesPreviousDay = calculateTotalExpenses(previousDayTasks);
-          previousDayBalance = totalIncomePreviousDay - totalExpensesPreviousDay;
+          previousDayBalance =
+              totalIncomePreviousDay - totalExpensesPreviousDay;
 
           // Calculate total income, expenses, and balance for all tasks
-          totalIncome = calculateTotalIncome(tasks); // Total income from all tasks
-          totalExpenses = calculateTotalExpenses(tasks); // Total expenses from all tasks
+          totalIncome =
+              calculateTotalIncome(tasks); // Total income from all tasks
+          totalExpenses =
+              calculateTotalExpenses(tasks); // Total expenses from all tasks
           totalBalance = totalIncome - totalExpenses; // Total balance
 
           return CustomScrollView(
             slivers: [
               SliverToBoxAdapter(
                 child: Padding(
-                  padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 20),
+                  padding: const EdgeInsets.symmetric(
+                      horizontal: 16.0, vertical: 20),
                   child: Center(
                     child: Container(
                       padding: const EdgeInsets.all(20),
@@ -303,7 +335,8 @@ class _HomeScreenState extends State<HomeScreen> {
                   previousDayTasks,
                   'Previous Day\'s Tasks',
                   previousDayBalance,
-                  DateFormat.yMMMMd().format(DateTime.now().subtract(const Duration(days: 1))),
+                  DateFormat.yMMMMd()
+                      .format(DateTime.now().subtract(const Duration(days: 1))),
                 ),
             ],
           );

@@ -1,5 +1,6 @@
 import 'package:expense_tracking_app/screens/add_edit/add/add_expense_screen.dart';
 import 'package:expense_tracking_app/screens/add_edit/add/add_income_screen.dart';
+import 'package:expense_tracking_app/screens/add_edit/edit/edit_screen.dart';
 import 'package:expense_tracking_app/screens/bottom_bar_screen.dart';
 import 'package:expense_tracking_app/screens/login_screen.dart';
 import 'package:expense_tracking_app/screens/register_screen.dart';
@@ -29,6 +30,11 @@ class Navigation {
         name: Screen.addIncome.name,
         builder: (context, state) => const AddIncomeScreen()),
     GoRoute(
+        path: "/edit/:id",
+        name: Screen.edit.name,
+        builder: (context, state) =>
+            EditScreen(id: state.pathParameters["id"]!)),
+    GoRoute(
         path: "/search",
         name: Screen.search.name,
         builder: (context, state) => const BottomBarScreen()),
@@ -52,6 +58,7 @@ enum Screen {
   addTabBar,
   addExpense,
   addIncome,
+  edit,
   search,
   overview,
   login,

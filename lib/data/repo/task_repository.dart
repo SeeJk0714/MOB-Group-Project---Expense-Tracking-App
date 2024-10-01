@@ -24,8 +24,7 @@ class TaskRepository {
 
   Stream<List<Task>> getTasksStream() {
     return getCollection().snapshots().map((event) => event.docs
-        .map((doc) =>
-            Task.fromMap(doc.data() as Map<String, dynamic>).copy(id: doc.id))
+        .map((doc) => Task.fromMap(doc.data() as Map<String, dynamic>, doc.id))
         .toList());
   }
 
@@ -35,7 +34,7 @@ class TaskRepository {
 
     for (var doc in res.docs) {
       final Task task =
-          Task.fromMap(doc.data() as Map<String, dynamic>).copy(id: doc.id);
+          Task.fromMap(doc.data() as Map<String, dynamic>, doc.id);
       tasks.add(task);
     }
 
@@ -48,11 +47,14 @@ class TaskRepository {
       return null;
     }
 
-    return Task.fromMap(res.data() as Map<String, dynamic>).copy(id: res.id);
+    return Task.fromMap(res.data()! as Map<String, dynamic>, res.id);
   }
 
   Future<void> addTask(Task task) async {
-    await getCollection().add(task.toMap());
+    DocumentReference docRef = await getCollection().add(task.toMap());
+
+    task = task.copy(id: docRef.id);
+    await docRef.update({"id": docRef.id});
   }
 
   Future<void> updateTask(Task task) async {
