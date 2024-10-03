@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:google_nav_bar/google_nav_bar.dart';
 import 'home_screen.dart';
 import 'add_edit/add/add_tab_bar_screen.dart'; // Import the AddScreen
-import 'overview_screen.dart'; // Import the OverviewScreen
+import 'overview/overview_screen.dart'; // Import the OverviewScreen
 import 'search_screen.dart'; // Import the SearchScreen
 
 class BottomBarScreen extends StatefulWidget {
