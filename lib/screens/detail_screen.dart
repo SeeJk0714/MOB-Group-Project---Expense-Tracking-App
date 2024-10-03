@@ -48,7 +48,7 @@ class _DetailScreenState extends State<DetailScreen> {
       case 'financial income':
         return Icons.trending_up_outlined;
       default:
-        return Icons.category;
+        return Icons.more_horiz;
     }
   }
 
@@ -72,7 +72,7 @@ class _DetailScreenState extends State<DetailScreen> {
 
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Detail Screen'),
+        title: const Text("Detail Screen"),
         centerTitle: true,
       ),
       body: Padding(
