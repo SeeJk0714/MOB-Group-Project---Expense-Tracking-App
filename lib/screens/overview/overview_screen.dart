@@ -153,7 +153,7 @@ class _OverviewScreenState extends State<OverviewScreen> {
                 children: [
                   Icon(icon),
                   Text(
-                    "RM$amount", // Display amount with currency
+                    "RM${amount.toStringAsFixed(2)}", // Display amount with currency
                     style: const TextStyle(
                       fontWeight: FontWeight.bold,
                       fontSize: 16,
@@ -194,9 +194,28 @@ class _OverviewScreenState extends State<OverviewScreen> {
             ],
           ),
           Text(
-              "RM$amount (${percentage.toStringAsFixed(1)}%)"), // Display amount and percentage
+              "RM${amount.toStringAsFixed(2)} (${percentage.toStringAsFixed(2)}%)"), // Display amount and percentage
         ],
       ),
+    );
+  }
+
+  Widget _buildNoDataMessage() {
+    return const Column(
+      mainAxisAlignment: MainAxisAlignment.center,
+      children: [
+        SizedBox(
+          height: 200.0,
+        ),
+        Icon(
+          Icons.hourglass_empty_outlined,
+          size: 50.0,
+        ),
+        Text(
+          "No data avalible",
+          style: TextStyle(fontSize: 30.0),
+        )
+      ],
     );
   }
 
@@ -249,39 +268,45 @@ class _OverviewScreenState extends State<OverviewScreen> {
             ),
             const SizedBox(height: 20.0),
             // Pie chart displaying the breakdown of expenses by category
-            Expanded(
-              child: PieChart(
-                PieChartData(
-                  sections: (showIncome ? categoryIncome : categoryExpenses)
-                      .entries
-                      .map((entry) {
-                    final category = entry.key;
-                    final amount = entry.value;
-                    final total = showIncome ? totalIncome : totalExpense;
-                    return PieChartSectionData(
-                      color: _getCategoryColor(category),
-                      value: amount,
-                      radius: 100.0,
-                      title:
-                          "${(amount / total * 100).toStringAsFixed(1)}%", // Percentage
-                      titleStyle: const TextStyle(
-                        fontSize: 16.0,
-                        fontWeight: FontWeight.bold,
-                        color: Colors.white,
+            (showIncome && categoryIncome.isEmpty) ||
+                    (!showIncome &&
+                        categoryExpenses
+                            .isEmpty) // Check data availability and render accordingly
+                ? _buildNoDataMessage()
+                : Expanded(
+                    child: PieChart(
+                      PieChartData(
+                        sections:
+                            (showIncome ? categoryIncome : categoryExpenses)
+                                .entries
+                                .map((entry) {
+                          final category = entry.key;
+                          final amount = entry.value;
+                          final total = showIncome ? totalIncome : totalExpense;
+                          return PieChartSectionData(
+                            color: _getCategoryColor(category),
+                            value: amount,
+                            radius: 100.0,
+                            title:
+                                "${(amount / total * 100).toStringAsFixed(2)}%", // Percentage
+                            titleStyle: const TextStyle(
+                              fontSize: 16.0,
+                              fontWeight: FontWeight.bold,
+                              color: Colors.white,
+                            ),
+                            badgeWidget: PieChartIcon(
+                                icon: _getCategoryIcon(category),
+                                size: 40.0,
+                                borderColor: Colors.black),
+                            badgePositionPercentageOffset: 1.1,
+                          );
+                        }).toList(),
+                        borderData: FlBorderData(show: true),
+                        centerSpaceRadius: 0,
+                        sectionsSpace: 0,
                       ),
-                      badgeWidget: PieChartIcon(
-                          icon: _getCategoryIcon(category),
-                          size: 40.0,
-                          borderColor: Colors.black),
-                      badgePositionPercentageOffset: 1.1,
-                    );
-                  }).toList(),
-                  borderData: FlBorderData(show: true),
-                  centerSpaceRadius: 0,
-                  sectionsSpace: 0,
-                ),
-              ),
-            ),
+                    ),
+                  ),
             const SizedBox(height: 20.0),
             // List of income or expense categories based on the current view (Income/Expense)
             ...(showIncome ? categoryIncome : categoryExpenses)

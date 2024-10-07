@@ -112,7 +112,7 @@ class _DetailScreenState extends State<DetailScreen> {
                         padding: const EdgeInsets.all(8.0),
                         decoration: BoxDecoration(
                           color: Colors.grey[200],
-                          borderRadius: BorderRadius.circular(12),
+                          borderRadius: BorderRadius.circular(12.0),
                         ),
                         child: Column(
                           children: [
@@ -141,7 +141,7 @@ class _DetailScreenState extends State<DetailScreen> {
                                           color:
                                               backgroundColor, // Apply the background color here
                                           borderRadius:
-                                              BorderRadius.circular(12)),
+                                              BorderRadius.circular(20.0)),
                                       child: ListTile(
                                         leading: Icon(
                                             _getIconForCategory(task.category)),

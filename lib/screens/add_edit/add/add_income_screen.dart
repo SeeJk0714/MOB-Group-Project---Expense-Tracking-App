@@ -230,9 +230,12 @@ class _AddIncomeScreenState extends State<AddIncomeScreen> {
                       ),
                       filled: true,
                       fillColor: const Color(0xFFCAA6A6)),
-                  keyboardType: TextInputType.number,
-                  inputFormatters: <TextInputFormatter>[
-                    FilteringTextInputFormatter.digitsOnly
+                  keyboardType:
+                      const TextInputType.numberWithOptions(decimal: true),
+                  inputFormatters: [
+                    // Allow Decimal Number With Precision of 2 Only
+                    FilteringTextInputFormatter.allow(
+                        RegExp(r'^\d*\.?\d{0,2}')),
                   ],
                 ),
                 const SizedBox(height: 20.0),

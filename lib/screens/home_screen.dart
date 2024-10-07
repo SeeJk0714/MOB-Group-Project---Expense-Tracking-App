@@ -99,7 +99,7 @@ class _HomeScreenState extends State<HomeScreen> {
         child: Container(
           decoration: BoxDecoration(
             color: backgroundColor,
-            borderRadius: BorderRadius.circular(12),
+            borderRadius: BorderRadius.circular(30.0),
           ),
           child: ListTile(
             contentPadding: const EdgeInsets.symmetric(
