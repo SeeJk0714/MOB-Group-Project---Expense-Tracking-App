@@ -42,48 +42,47 @@ class _UserProfileScreenState extends State<UserProfileScreen> {
   }
 
   Future<void> _uploadProfileImage(XFile image) async {
-  try {
-    // Get a reference to Firebase Storage
-    final storageRef = FirebaseStorage.instance.ref();
-    
-    // Create a unique filename for the image using user ID and image name
-    String fileName = 'profile_images/${_currentUser!.id}/${image.name}';
-    final imageRef = storageRef.child(fileName);
+    try {
+      // Get a reference to Firebase Storage
+      final storageRef = FirebaseStorage.instance.ref();
 
+      // Create a unique filename for the image using user ID and image name
+      String fileName = 'profile_images/${_currentUser!.id}/${image.name}';
+      final imageRef = storageRef.child(fileName);
 
-    // Upload the image
-    await imageRef.putFile(File(image.path));
+      // Upload the image
+      await imageRef.putFile(File(image.path));
 
-    // Get the download URL
-    final downloadUrl = await imageRef.getDownloadURL();
+      // Get the download URL
+      final downloadUrl = await imageRef.getDownloadURL();
 
-    // Verify downloadUrl is not null or empty
-    // ignore: unnecessary_null_comparison
-    if (downloadUrl == null || downloadUrl.isEmpty) {
-      throw Exception('Failed to get download URL');
+      // Verify downloadUrl is not null or empty
+      // ignore: unnecessary_null_comparison
+      if (downloadUrl == null || downloadUrl.isEmpty) {
+        throw Exception('Failed to get download URL');
+      }
+
+      // Update the user profile with the new image URL
+      final updatedUser = _currentUser!.copy(profileImageUrl: downloadUrl);
+
+      await _userRepository.updateUser(updatedUser);
+
+      setState(() {
+        _profileImageUrl =
+            downloadUrl; // Update the local variable with the new image URL
+      });
+
+      // ignore: use_build_context_synchronously
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('Profile picture updated successfully!')),
+      );
+    } catch (e) {
+      // ignore: use_build_context_synchronously
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('Error uploading image: $e')),
+      );
     }
-
-    // Update the user profile with the new image URL
-    final updatedUser = _currentUser!.copy(profileImageUrl: downloadUrl);
-    
-    await _userRepository.updateUser(updatedUser);
-
-    setState(() {
-      _profileImageUrl = downloadUrl; // Update the local variable with the new image URL
-    });
-
-    // ignore: use_build_context_synchronously
-    ScaffoldMessenger.of(context).showSnackBar(
-      const SnackBar(content: Text('Profile picture updated successfully!')),
-    );
-  } catch (e) {
-    // ignore: use_build_context_synchronously
-    ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(content: Text('Error uploading image: $e')),
-    );
   }
-}
-
 
   @override
   void initState() {
@@ -94,7 +93,8 @@ class _UserProfileScreenState extends State<UserProfileScreen> {
   Future<void> _fetchCurrentUser() async {
     try {
       // Fetch the logged-in user's ID from FirebaseAuth
-      final firebase_auth.User? firebaseUser = firebase_auth.FirebaseAuth.instance.currentUser;
+      final firebase_auth.User? firebaseUser =
+          firebase_auth.FirebaseAuth.instance.currentUser;
 
       if (firebaseUser != null) {
         // Get user data from Firestore using the user ID
@@ -105,7 +105,8 @@ class _UserProfileScreenState extends State<UserProfileScreen> {
             _currentUser = user;
             _usernameController.text = user.username;
             _emailController.text = user.email;
-            _profileImageUrl = user.profileImageUrl; // Load the existing profile image URL
+            _profileImageUrl =
+                user.profileImageUrl; // Load the existing profile image URL
             _isLoading = false;
           });
         } else {
@@ -131,15 +132,13 @@ class _UserProfileScreenState extends State<UserProfileScreen> {
     try {
       // Create a modified copy of the user with updated fields
       final updatedUser = _currentUser!.copy(
-        username: _usernameController.text,
-        email: _emailController.text,
-        profileImageUrl: _profileImageUrl
-      );
+          username: _usernameController.text,
+          email: _emailController.text,
+          profileImageUrl: _profileImageUrl);
       await _userRepository.updateUser(updatedUser);
       // ignore: use_build_context_synchronously
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(content: Text('Profile updated successfully!')),
-        
       );
       // ignore: use_build_context_synchronously
       await context.pushNamed(Screen.home.name);
@@ -165,7 +164,8 @@ class _UserProfileScreenState extends State<UserProfileScreen> {
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
             GestureDetector(
-              onTap: onProfileTapped, // Call the onProfileTapped function when tapped
+              onTap:
+                  onProfileTapped, // Call the onProfileTapped function when tapped
               child: Container(
                 height: 100.0,
                 width: 100.0,
@@ -174,14 +174,15 @@ class _UserProfileScreenState extends State<UserProfileScreen> {
                   shape: BoxShape.circle,
                   image: _profileImageUrl != null
                       ? DecorationImage(
-                          image: NetworkImage(_profileImageUrl!), // Load the profile image
-                          fit: BoxFit.cover,
+                          image: NetworkImage(
+                              _profileImageUrl!), // Load the profile image
+                          fit: BoxFit.contain,
                         )
                       : null,
                 ),
                 child: _profileImageUrl == null
                     ? const Icon(
-                        Icons.person_2,
+                        Icons.person,
                         color: Colors.black,
                         size: 35.0,
                       )
@@ -191,23 +192,33 @@ class _UserProfileScreenState extends State<UserProfileScreen> {
             const SizedBox(height: 20.0),
             TextFormField(
               controller: _usernameController,
-              decoration: const InputDecoration(labelText: "Username"),
+              decoration: const InputDecoration(
+                hintText: "Username",
+                border: InputBorder.none,
+              ),
               validator: (value) {
                 if (value == null || value.isEmpty) {
                   return 'Please enter a username';
                 }
                 return null;
               },
+              textAlign: TextAlign.center,
+              style:
+                  const TextStyle(fontSize: 30.0, fontWeight: FontWeight.bold),
             ),
             TextFormField(
               controller: _emailController,
-              decoration: const InputDecoration(labelText: "Email"),
+              decoration: const InputDecoration(
+                hintText: "Email",
+                border: InputBorder.none,
+              ),
               validator: (value) {
                 if (value == null || value.isEmpty) {
                   return 'Please enter an email';
                 }
                 return null;
               },
+              textAlign: TextAlign.center,
             ),
             const SizedBox(height: 32),
             ElevatedButton(
@@ -215,39 +226,30 @@ class _UserProfileScreenState extends State<UserProfileScreen> {
               child: const Text("Save Changes"),
             ),
             const SizedBox(height: 20.0),
-            Card(
-              elevation: 10,
-              shape: const RoundedRectangleBorder(
-                borderRadius: BorderRadius.all(Radius.circular(25.0)),
-              ),
-              child: Padding(
-                padding: const EdgeInsets.all(20.0),
-                child: Column(
-                  children: [
-                    const SizedBox(height: 10.0),
-                    const Divider(color: Colors.black),
-                    const SizedBox(height: 10.0),
-                    Row(
-                      children: [
-                        const Icon(
-                          Icons.logout,
-                          size: 30.0,
-                          color: Colors.red,
-                        ),
-                        const SizedBox(width: 20.0),
-                        ElevatedButton(
-                          onPressed: _logout,
-                          style: ElevatedButton.styleFrom(
-                            padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
-                          ),
-                          child: const Text(
-                            "Logout",
-                            style: TextStyle(fontSize: 20.0),
-                          ),
-                        ),
-                      ],
-                    ),
-                  ],
+            GestureDetector(
+              onTap: _logout,
+              child: const Card(
+                elevation: 10,
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.all(Radius.circular(25.0)),
+                ),
+                child: Padding(
+                  padding: EdgeInsets.all(20.0),
+                  child: Row(
+                    children: [
+                      Icon(
+                        Icons.logout,
+                        size: 30.0,
+                        color: Colors.red,
+                      ),
+                      SizedBox(width: 20.0),
+                      Text(
+                        "Logout",
+                        style: TextStyle(
+                            fontSize: 20.0, fontWeight: FontWeight.bold),
+                      )
+                    ],
+                  ),
                 ),
               ),
             ),

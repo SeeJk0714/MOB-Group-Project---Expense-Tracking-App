@@ -302,7 +302,23 @@ class _HomeScreenState extends State<HomeScreen> {
           }
 
           if (!snapshot.hasData || snapshot.data!.isEmpty) {
-            return const Center(child: Text('No expenses or income available'));
+            return const Center(
+                child: Column(
+              children: [
+                SizedBox(
+                  height: 300.0,
+                ),
+                Icon(
+                  Icons.hourglass_empty_outlined,
+                  size: 50.0,
+                ),
+                Text(
+                  'No expenses or income available',
+                  style: TextStyle(fontSize: 30.0),
+                  textAlign: TextAlign.center,
+                ),
+              ],
+            ));
           }
 
           tasks = snapshot.data!;

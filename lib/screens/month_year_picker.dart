@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
+import 'package:month_year_picker/month_year_picker.dart';
 
 class MonthYearPicker extends StatelessWidget {
   final DateTime selectedDate;
@@ -12,12 +13,11 @@ class MonthYearPicker extends StatelessWidget {
   });
 
   Future<void> _selectMonthYear(BuildContext context) async {
-    DateTime? picked = await showDatePicker(
+    DateTime? picked = await showMonthYearPicker(
       context: context,
       initialDate: selectedDate,
       firstDate: DateTime(2000),
-      lastDate: DateTime(2100),
-      initialDatePickerMode: DatePickerMode.year,
+      lastDate: DateTime(2050),
     );
 
     if (picked != null && picked != selectedDate) {
@@ -36,7 +36,15 @@ class MonthYearPicker extends StatelessWidget {
         ),
         ElevatedButton(
           onPressed: () => _selectMonthYear(context),
-          child: const Text("Select Month"),
+          child: const Row(
+            children: [
+              Icon(Icons.date_range_outlined),
+              SizedBox(
+                width: 10.0,
+              ),
+              Text("Select Month"),
+            ],
+          ),
         ),
       ],
     );
