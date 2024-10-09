@@ -1,39 +1,31 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
-
 import '../model/user.dart';
 
-class Userrepository {
+class UserRepository {
   final FirebaseFirestore _firestore = FirebaseFirestore.instance;
 
+  // Add a new user to Firestore
   Future<void> addUser(User user) async {
     try {
-      // Check if a user with the same email exists
-      final querySnapshot = await _firestore
-          .collection('users')
-          .where('email', isEqualTo: user.email)
-          .get();
-
-      if (querySnapshot.docs.isNotEmpty) {
-        throw Exception('Email already exists');
+      // Check if user ID is null. If so, throw an exception.
+      if (user.id == null) {
+        throw Exception('User ID cannot be null');
       }
 
-      // Add the user if email doesn't exist
-      await _firestore.collection('users').add(user.toMap());
+      // Use the document ID as the user's id
+      await _firestore.collection('users').doc(user.id).set(user.toMap());
     } catch (e) {
       throw Exception('Error in adding user: $e');
     }
   }
+  
 
-  // The rest of the methods stay the same
+  // Retrieve a user by their ID from Firestore
   Future<User?> getUserById(String id) async {
     try {
-      final user = await _firestore.collection('users').doc(id).get();
-      if (user.exists) {
-        return User(
-          id: user.data()?['id'],
-          username: user.data()?['username'],
-          email: user.data()?['email'],
-        );
+      final userDoc = await _firestore.collection('users').doc(id).get();
+      if (userDoc.exists && userDoc.data() != null) {
+        return User.fromMap(userDoc.data()!);
       }
     } catch (e) {
       throw Exception("Error in getting User: $e");
@@ -41,17 +33,21 @@ class Userrepository {
     return null;
   }
 
+  // Update an existing user in Firestore
   Future<void> updateUser(User user) async {
     try {
-      await _firestore
-          .collection('users')
-          .doc(user.id.toString())
-          .update(user.toMap());
+      // Check if user ID is null. If so, throw an exception.
+      if (user.id == null) {
+        throw Exception('User ID cannot be null');
+      }
+
+      await _firestore.collection('users').doc(user.id).update(user.toMap());
     } catch (e) {
       throw Exception('Error updating user: $e');
     }
   }
 
+  // Delete a user from Firestore by their ID
   Future<void> deleteUser(String id) async {
     try {
       await _firestore.collection('users').doc(id).delete();
@@ -60,14 +56,14 @@ class Userrepository {
     }
   }
 
+  // Retrieve all users from Firestore
   Future<List<User>> getAllUsers() async {
     try {
       final querySnapshot = await _firestore.collection('users').get();
-      return querySnapshot.docs.map((user) {
-        return User(
-            id: user.data()['id'],
-            username: user.data()['username'],
-            email: user.data()['email']);
+
+      // Convert each document to a User object using fromMap
+      return querySnapshot.docs.map((doc) {
+        return User.fromMap(doc.data());
       }).toList();
     } catch (e) {
       throw Exception('Error fetching users: $e');

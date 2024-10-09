@@ -1,6 +1,6 @@
 import 'package:cloud_firestore/cloud_firestore.dart'; // Firestore
 import 'package:expense_tracking_app/data/auth/auth_service.dart';
-import 'package:expense_tracking_app/nav/Navigation.dart';
+import 'package:expense_tracking_app/nav/navigation.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
@@ -80,6 +80,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
 
       if (user != null) {
         await _firestore.collection('users').doc(user.uid).set({
+          'id': user.uid,
           'username': _usernameController.text,
           'email': _emailController.text,
         }).then((_) {

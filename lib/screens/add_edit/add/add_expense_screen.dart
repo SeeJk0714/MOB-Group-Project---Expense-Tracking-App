@@ -28,15 +28,15 @@ class _AddExpenseScreenState extends State<AddExpenseScreen> {
 
   //create show datepicker function
   Future<void> selectDate() async {
-    DateTime? _selected = await showDatePicker(
+    DateTime? selected = await showDatePicker(
         context: context,
         firstDate: DateTime(2000),
         lastDate: DateTime(2050),
         initialDate: DateTime.now());
 
-    if (_selected != null) {
+    if (selected != null) {
       setState(() {
-        _dateController.text = _selected.toString().split(" ")[0];
+        _dateController.text = selected.toString().split(" ")[0];
       });
     }
   }
