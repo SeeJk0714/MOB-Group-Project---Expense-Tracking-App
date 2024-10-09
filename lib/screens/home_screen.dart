@@ -1,9 +1,16 @@
 import 'package:expense_tracking_app/data/model/task.dart';
+import 'package:expense_tracking_app/data/repo/user_repository.dart';
 import 'package:expense_tracking_app/screens/detail_screen.dart';
-import 'package:expense_tracking_app/nav/Navigation.dart';
+import 'package:expense_tracking_app/nav/navigation.dart';
+import 'package:expense_tracking_app/screens/user_profile_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:intl/intl.dart';
+
+import 'package:expense_tracking_app/data/model/user.dart'
+    as app_model; // Use an alias for your custom User class
+import 'package:firebase_auth/firebase_auth.dart'
+    as firebase_auth; // Use an alias for the FirebaseAuth User class
 
 import '../data/repo/task_repository.dart';
 
@@ -15,6 +22,11 @@ class HomeScreen extends StatefulWidget {
 }
 
 class _HomeScreenState extends State<HomeScreen> {
+  final UserRepository _userrepository = UserRepository();
+  // ignore: unused_field
+  app_model.User? _currentUser;
+  String? _profileImageUrl;
+
   double todayBalance = 0; // Today's balance
   double previousDayBalance = 0; // Previous day's balance
   double totalIncomeToday = 0; // Total income for today
@@ -84,6 +96,35 @@ class _HomeScreenState extends State<HomeScreen> {
     }
   }
 
+  // Click this go to edit page
+  void _navigateToEdit(String id) async {
+    await context.pushNamed(Screen.edit.name,
+        pathParameters: {"id": id} // Indicate return to home
+        );
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    _fetchCurrentUser();
+  }
+
+  Future<void> _fetchCurrentUser() async {
+    final firebaseUser = firebase_auth.FirebaseAuth.instance.currentUser;
+
+    if (firebaseUser != null) {
+      final userId = firebaseUser.uid;
+
+      // Use your app's custom User class to get the user details
+      final user = await _userrepository.getUserById(userId);
+
+      setState(() {
+        _currentUser = user;
+        _profileImageUrl = user?.profileImageUrl;
+      });
+    }
+  }
+
   Widget buildExpenseItem(String title, String subtitle, String amount,
       IconData icon, String status,
       {VoidCallback? onTap}) {
@@ -122,13 +163,6 @@ class _HomeScreenState extends State<HomeScreen> {
         ),
       ),
     );
-  }
-
-  // Click this go to edit page
-  void _navigateToEdit(String id) async {
-    await context.pushNamed(Screen.edit.name,
-        pathParameters: {"id": id} // Indicate return to home
-        );
   }
 
   Widget _buildTasksList(
@@ -218,11 +252,42 @@ class _HomeScreenState extends State<HomeScreen> {
 
   @override
   Widget build(BuildContext context) {
+    const String userId = 'someUserId';
     return Scaffold(
       appBar: AppBar(
         title: const Text('Home'),
         centerTitle: true,
         elevation: 0,
+        leading: GestureDetector(
+          onTap: () {
+            // Navigate to profile screen or show profile options
+            Navigator.push(
+              context,
+              MaterialPageRoute(
+                builder: (context) => const UserProfileScreen(userId: userId),
+              ),
+            );
+          },
+          child: Column(
+            children: [
+              if (_profileImageUrl != null &&
+                  _profileImageUrl!.startsWith('http'))
+                CircleAvatar(
+                  radius: 20,
+                  backgroundImage: NetworkImage(_profileImageUrl!),
+                )
+              else
+                const CircleAvatar(
+                  radius: 20,
+                  child: Icon(
+                    Icons.person_2,
+                    color: Colors.black,
+                    size: 35.0,
+                  ),
+                ),
+            ],
+          ),
+        ),
       ),
       body: StreamBuilder<List<Task>>(
         stream: TaskRepository.instance.getTasksStream(),
@@ -237,7 +302,7 @@ class _HomeScreenState extends State<HomeScreen> {
           }
 
           if (!snapshot.hasData || snapshot.data!.isEmpty) {
-            return const Center(child: Text('No tasks available'));
+            return const Center(child: Text('No expenses or income available'));
           }
 
           tasks = snapshot.data!;

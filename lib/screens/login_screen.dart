@@ -1,5 +1,5 @@
 import 'package:expense_tracking_app/data/auth/auth_service.dart';
-import 'package:expense_tracking_app/nav/Navigation.dart';
+import 'package:expense_tracking_app/nav/navigation.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
@@ -21,7 +21,7 @@ class _LoginScreenState extends State<LoginScreen> {
   bool _isLoading = false;
 
   Future<void> _login() async {
-    // Clear errors
+    // Clear errors and set loading state
     setState(() {
       _emailError = null;
       _pswError = null;
@@ -48,21 +48,24 @@ class _LoginScreenState extends State<LoginScreen> {
       User? user = await _authService.signInWithEmailPassword(
           _emailController.text, _pswController.text);
       if (user != null) {
+        // Navigate to home screen if login is successful
+        // ignore: use_build_context_synchronously
         await context.pushNamed(Screen.home.name);
       }
     } on FirebaseAuthException catch (e) {
       setState(() {
+        // Set appropriate error messages based on the FirebaseAuthException code
         if (e.code == 'user-not-found') {
-          _emailError = "Email does not exist";
+          _emailError = "Email does not exist. Please check or sign up.";
         } else if (e.code == 'wrong-password') {
-          _pswError = "Incorrect Password";
+          _pswError = "Incorrect password. Please try again.";
         } else {
-          _emailError = "Login failed. Please try again";
+          _emailError = "Login failed. Please try again later.";
         }
       });
     } finally {
       setState(() {
-        _isLoading = false;
+        _isLoading = false; // Stop loading indicator
       });
     }
   }
@@ -77,7 +80,7 @@ class _LoginScreenState extends State<LoginScreen> {
             fit: BoxFit.cover,
           ),
         ),
-        child: Padding(
+        child: SingleChildScrollView(
           padding: const EdgeInsets.all(30.0),
           child: Column(
             mainAxisAlignment: MainAxisAlignment.start,
@@ -113,16 +116,17 @@ class _LoginScreenState extends State<LoginScreen> {
                 }),
                 style: const TextStyle(fontSize: 22.0, color: Colors.black),
                 decoration: InputDecoration(
-                    labelText: "Email",
-                    labelStyle:
-                        const TextStyle(fontSize: 22.0, color: Colors.black54),
-                    errorText: _emailError, // Show error message here
-                    border: OutlineInputBorder(
-                      borderRadius: BorderRadius.circular(20.0),
-                      borderSide: BorderSide.none,
-                    ),
-                    filled: true,
-                    fillColor: const Color(0xFFFFE7E7)),
+                  labelText: "Email",
+                  labelStyle:
+                      const TextStyle(fontSize: 22.0, color: Colors.black54),
+                  errorText: _emailError, // Display error message here
+                  border: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(20.0),
+                    borderSide: BorderSide.none,
+                  ),
+                  filled: true,
+                  fillColor: const Color(0xFFFFE7E7),
+                ),
               ),
               const SizedBox(height: 20.0),
               TextField(
@@ -133,20 +137,23 @@ class _LoginScreenState extends State<LoginScreen> {
                 style: const TextStyle(fontSize: 22.0),
                 obscureText: true,
                 decoration: InputDecoration(
-                    labelText: "Password",
-                    labelStyle:
-                        const TextStyle(fontSize: 22.0, color: Colors.black54),
-                    errorText: _pswError, // Show error message here
-                    border: OutlineInputBorder(
-                      borderRadius: BorderRadius.circular(20.0),
-                      borderSide: BorderSide.none,
-                    ),
-                    filled: true,
-                    fillColor: const Color(0xFFFFE7E7)),
+                  labelText: "Password",
+                  labelStyle:
+                      const TextStyle(fontSize: 22.0, color: Colors.black54),
+                  errorText: _pswError, // Display error message here
+                  border: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(20.0),
+                    borderSide: BorderSide.none,
+                  ),
+                  filled: true,
+                  fillColor: const Color(0xFFFFE7E7),
+                ),
               ),
               const SizedBox(height: 140),
               _isLoading
-                  ? const Center(child: CircularProgressIndicator())
+                  ? const Center(
+                      child: CircularProgressIndicator(),
+                    )
                   : FilledButton(
                       style: FilledButton.styleFrom(
                         padding: const EdgeInsets.symmetric(vertical: 16.0),
@@ -156,27 +163,30 @@ class _LoginScreenState extends State<LoginScreen> {
                         ),
                       ),
                       onPressed: _login,
-                      child: const Text('Login',
-                          style: TextStyle(
-                            fontSize: 25.0,
-                            color: Colors.white,
-                          )),
+                      child: const Text(
+                        'Login',
+                        style: TextStyle(
+                          fontSize: 25.0,
+                          color: Colors.white,
+                        ),
+                      ),
                     ),
               const SizedBox(height: 10.0),
               Center(
                 child: TextButton(
-                    onPressed: () {
-                      context.pushNamed(Screen.register.name);
-                    },
-                    child: const Text(
-                      "Sign Up",
-                      style: TextStyle(
-                        fontSize: 25.0,
-                        color: Color(0xFFB47B84),
-                        decoration: TextDecoration.underline,
-                      ),
-                    )),
-              )
+                  onPressed: () {
+                    context.pushNamed(Screen.register.name);
+                  },
+                  child: const Text(
+                    "Sign Up",
+                    style: TextStyle(
+                      fontSize: 25.0,
+                      color: Color(0xFFB47B84),
+                      decoration: TextDecoration.underline,
+                    ),
+                  ),
+                ),
+              ),
             ],
           ),
         ),

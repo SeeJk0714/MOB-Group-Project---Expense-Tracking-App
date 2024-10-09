@@ -1,4 +1,5 @@
-import 'package:expense_tracking_app/nav/Navigation.dart';
+import 'package:expense_tracking_app/nav/navigation.dart';
+import 'package:expense_tracking_app/screens/month_year_picker.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:intl/intl.dart';
@@ -16,13 +17,14 @@ class DetailScreen extends StatefulWidget {
 }
 
 class _DetailScreenState extends State<DetailScreen> {
+  DateTime selectedDate = DateTime.now(); // Initialize with the current date
+
   // Helper function to group tasks by date
   Map<String, List<Task>> _groupTasksByDate(List<Task> tasks) {
     Map<String, List<Task>> groupedTasks = {};
 
     for (var task in tasks) {
-      String formattedDate =
-          DateFormat.yMMMMd().format(task.date); // Format the date
+      String formattedDate = DateFormat.yMMMMd().format(task.date);
       if (groupedTasks.containsKey(formattedDate)) {
         groupedTasks[formattedDate]!.add(task);
       } else {
@@ -30,6 +32,12 @@ class _DetailScreenState extends State<DetailScreen> {
       }
     }
     return groupedTasks;
+  }
+
+  void _onDateChanged(DateTime newDate) {
+    setState(() {
+      selectedDate = newDate; // Update the selected date
+    });
   }
 
   // Helper function to get icon based on category
@@ -59,16 +67,22 @@ class _DetailScreenState extends State<DetailScreen> {
       pathParameters: {"id": id},
     );
   }
+  
+  
 
   @override
   Widget build(BuildContext context) {
-    // Group tasks by date
-    final groupedTasks = _groupTasksByDate(widget.tasks);
+    // Filter tasks by the selected month and year
+    final filteredTasks = widget.tasks.where((task) {
+      final taskDate = task.date;
+      return taskDate.year == selectedDate.year && taskDate.month == selectedDate.month;
+    }).toList();
+
+    final groupedTasks = _groupTasksByDate(filteredTasks);
 
     // Sort dates in descending order
     List<String> sortedDates = groupedTasks.keys.toList()
-      ..sort((a, b) =>
-          DateFormat.yMMMMd().parse(b).compareTo(DateFormat.yMMMMd().parse(a)));
+      ..sort((a, b) => DateFormat.yMMMMd().parse(b).compareTo(DateFormat.yMMMMd().parse(a)));
 
     return Scaffold(
       appBar: AppBar(
@@ -81,14 +95,18 @@ class _DetailScreenState extends State<DetailScreen> {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             const SizedBox(height: 20),
+            MonthYearPicker(
+              selectedDate: selectedDate,
+              onDateChanged: _onDateChanged,
+            ),
+            const SizedBox(height: 20),
             Expanded(
               child: ListView.builder(
                 itemCount: sortedDates.length,
                 itemBuilder: (context, index) {
-                  String date = sortedDates[index]; // Use sorted dates
+                  String date = sortedDates[index];
                   List<Task> tasksForDate = groupedTasks[date]!;
 
-                  // Calculate balance for the day
                   double income = tasksForDate
                       .where((task) => task.status.toLowerCase() == 'income')
                       .fold(0.0, (sum, task) => sum + task.amount);
@@ -123,31 +141,24 @@ class _DetailScreenState extends State<DetailScreen> {
                               itemBuilder: (context, index) {
                                 final task = tasksForDate[index];
 
-                                // Determine the background color based on the task status
-                                final backgroundColor =
-                                    task.status.trim().toLowerCase() == 'income'
-                                        ? const Color(0xffCAA6A6)
-                                        : const Color(0xfff8d7da);
+                                final backgroundColor = task.status.trim().toLowerCase() == 'income'
+                                    ? const Color(0xffCAA6A6)
+                                    : const Color(0xfff8d7da);
 
                                 return Padding(
-                                  padding: const EdgeInsets.symmetric(
-                                      vertical: 6, horizontal: 16),
+                                  padding: const EdgeInsets.symmetric(vertical: 6, horizontal: 16),
                                   child: GestureDetector(
                                     onTap: () {
                                       _navigateToEdit(task.id!);
                                     },
                                     child: Container(
                                       decoration: BoxDecoration(
-                                          color:
-                                              backgroundColor, // Apply the background color here
-                                          borderRadius:
-                                              BorderRadius.circular(12)),
+                                          color: backgroundColor,
+                                          borderRadius: BorderRadius.circular(12)),
                                       child: ListTile(
-                                        leading: Icon(
-                                            _getIconForCategory(task.category)),
+                                        leading: Icon(_getIconForCategory(task.category)),
                                         title: Text(task.note),
-                                        subtitle: Text(
-                                            'RM ${task.amount.toStringAsFixed(2)} - ${task.status}'),
+                                        subtitle: Text('RM ${task.amount.toStringAsFixed(2)} - ${task.status}'),
                                       ),
                                     ),
                                   ),
@@ -156,26 +167,20 @@ class _DetailScreenState extends State<DetailScreen> {
                             ),
                             const SizedBox(height: 8),
                             Padding(
-                              padding: const EdgeInsets.symmetric(
-                                  vertical: 6, horizontal: 16),
+                              padding: const EdgeInsets.symmetric(vertical: 6, horizontal: 16),
                               child: Row(
-                                mainAxisAlignment:
-                                    MainAxisAlignment.spaceBetween,
+                                mainAxisAlignment: MainAxisAlignment.spaceBetween,
                                 children: [
                                   const Text(
                                     "BALANCE:",
-                                    style: TextStyle(
-                                        fontSize: 20,
-                                        fontWeight: FontWeight.w500),
+                                    style: TextStyle(fontSize: 20, fontWeight: FontWeight.w500),
                                   ),
                                   Text(
                                     "RM ${balance.toStringAsFixed(2)}",
                                     style: TextStyle(
                                       fontSize: 20,
                                       fontWeight: FontWeight.bold,
-                                      color: balance >= 0
-                                          ? Colors.green
-                                          : Colors.red,
+                                      color: balance >= 0 ? Colors.green : Colors.red,
                                     ),
                                   ),
                                 ],

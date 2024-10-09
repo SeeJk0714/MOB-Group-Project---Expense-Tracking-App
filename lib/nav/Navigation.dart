@@ -51,6 +51,10 @@ class Navigation {
         path: "/register",
         name: Screen.register.name,
         builder: (context, state) => const RegisterScreen()),
+    // GoRoute(
+    //     path: "/userProfile",
+    //     name: Screen.userProfile.name,
+    //     builder: (context, state) => const UserProfileScreen()),
   ];
 }
 
@@ -64,5 +68,6 @@ enum Screen {
   search,
   overview,
   login,
-  register
+  register,
+  userProfile
 }
