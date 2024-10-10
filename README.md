@@ -1,16 +1,35 @@
-# expense_tracking_app
+# CashFlow Keeper (Expense Tracking App)
 
-A new Flutter project.
+Team members: See Jie Kai, Denish Rao
 
-## Getting Started
+## Introduction
 
-This project is a starting point for a Flutter application.
+## Features
 
-A few resources to get you started if this is your first Flutter project:
+User registration and Profile page
 
-- [Lab: Write your first Flutter app](https://docs.flutter.dev/get-started/codelab)
-- [Cookbook: Useful Flutter samples](https://docs.flutter.dev/cookbook)
+Add their income and daily spendings
 
-For help getting started with Flutter development, view the
-[online documentation](https://docs.flutter.dev/), which offers tutorials,
-samples, guidance on mobile development, and a full API reference.
+Edit their income and daily spendings
+
+Delete the added income
+
+Search by description
+
+List of incomes and expenses
+
+Monthly overall expenses
+
+## Tech Stack
+
+Language and Framework: Flutter, Dart
+
+Database: Firebase
+
+## Figma
+
+Link: https://www.figma.com/design/8FMEslIesBxit4qz4tyBZ5/Expense-Track-App?node-id=0-1&t=82neUIyOl5hzVGHu-1
+
+## Github
+
+Link: https://github.com/SeeJk0714/MOB-Group-Project---Expense-Tracking-App

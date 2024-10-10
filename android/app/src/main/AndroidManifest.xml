@@ -5,7 +5,7 @@
 
 
     <application
-        android:label="expense_tracking_app"
+        android:label="CashFlow Keeper"
         android:name="${applicationName}"
         android:icon="@mipmap/ic_launcher">
         <activity
