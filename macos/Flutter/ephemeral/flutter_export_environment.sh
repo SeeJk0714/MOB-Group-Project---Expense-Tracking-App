@@ -1,7 +1,7 @@
 #!/bin/sh
 # This is a generated file; do not edit or check into version control.
-export "FLUTTER_ROOT=C:\flutter"
-export "FLUTTER_APPLICATION_PATH=C:\Users\JK\Documents\Flutter\expense_tracking_app"
+export "FLUTTER_ROOT=/Users/harden1703/VisualStudioCode/flutter"
+export "FLUTTER_APPLICATION_PATH=/Users/harden1703/VisualStudioCode/MOB-Group-Project---Expense-Tracking-App"
 export "COCOAPODS_PARALLEL_CODE_SIGN=true"
 export "FLUTTER_BUILD_DIR=build"
 export "FLUTTER_BUILD_NAME=1.0.0"
